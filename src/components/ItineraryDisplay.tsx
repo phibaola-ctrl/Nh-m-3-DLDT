@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { TripPlan } from "../lib/gemini";
 import { motion, AnimatePresence } from "motion/react";
-import { Coffee, Sun, Moon, ArrowLeft, Download, Share2, Sparkles, Loader2, Wallet, MapPin, Calendar, Edit3, Trash2, Plus, Check, Save } from "lucide-react";
+import { Coffee, Sun, Moon, ArrowLeft, Download, Share2, Sparkles, Loader2, Wallet, MapPin, Calendar, Edit3, Trash2, Plus, Check, Save, Search } from "lucide-react";
 import { jsPDF } from "jspdf";
 import * as htmlToImage from 'html-to-image';
 
@@ -18,6 +18,19 @@ export default function ItineraryDisplay({ plan: initialPlan, onBack, location }
   const [isExporting, setIsExporting] = useState(false);
   const [showCopySuccess, setShowCopySuccess] = useState(false);
   const pdfRef = useRef<HTMLDivElement>(null);
+
+  const handleSearchSimilarTour = () => {
+    if (!location) return;
+    
+    const days = localPlan.itinerary.length;
+    const query = days 
+      ? `${location} ${days} ngày tour du lịch`
+      : `${location} tour du lịch`;
+      
+    const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+    window.open(url, "_blank");
+  };
+
 
   // Sync with initialPlan if it changes (e.g. new generation)
   useEffect(() => {
@@ -400,6 +413,12 @@ export default function ItineraryDisplay({ plan: initialPlan, onBack, location }
           </div>
         </div>
         <div className="flex gap-6">
+          <button 
+            onClick={handleSearchSimilarTour}
+            className="text-xs font-bold text-sage flex items-center gap-1.5 hover:opacity-70 transition-opacity border-r border-cream-border pr-6"
+          >
+            <Search size={14} /> Tìm tour tương tự
+          </button>
           <button 
             onClick={handleDownloadPDF}
             disabled={isExporting}

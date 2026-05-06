@@ -73,7 +73,7 @@ function MainLayout() {
             <div className="w-8 h-8 bg-sage rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform">
               <Map className="text-white" size={18} />
             </div>
-            <span className="serif text-lg font-bold tracking-tight">AI Travel</span>
+            <span className="serif text-lg font-bold tracking-tight">NextStep AI</span>
           </Link>
 
           <div className="flex gap-4 md:gap-8 bg-zinc-100 p-1 rounded-2xl">
@@ -165,7 +165,7 @@ function MainLayout() {
       </main>
 
       <footer className="py-20 border-t border-cream-border text-center">
-        <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">AI TRAVEL PLANNER & EXPLORER</p>
+        <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">NEXTSTEP AI PLANNER & EXPLORER</p>
         <p className="text-zinc-400 text-[9px] italic">Design for authenticity • Built with Gemini AI</p>
       </footer>
     </div>
