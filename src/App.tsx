@@ -93,7 +93,7 @@ function MainLayout() {
 
           <div className="hidden md:flex items-center gap-2 text-zinc-400 font-mono text-[9px] uppercase tracking-widest">
             <Heart size={14} className="text-terracotta" fill="currentColor" />
-            <span>AUTHENTIC EXPERIENCES</span>
+            <span>Nhóm 3</span>
           </div>
         </div>
       </nav>
@@ -166,7 +166,7 @@ function MainLayout() {
 
       <footer className="py-20 border-t border-cream-border text-center">
         <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">NEXTSTEP AI PLANNER & EXPLORER</p>
-        <p className="text-zinc-400 text-[9px] italic">Design for authenticity • Built with Gemini AI</p>
+        <p className="text-zinc-400 text-[9px] italic">Web Tạo Bởi Nhóm 3 Phục Vụ Môn Du Lịch Điện Tử</p>
       </footer>
     </div>
   );
