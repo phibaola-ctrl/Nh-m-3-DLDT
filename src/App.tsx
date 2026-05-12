@@ -5,6 +5,7 @@ import TravelForm from "./components/TravelForm";
 import ItineraryDisplay from "./components/ItineraryDisplay";
 import PlaceList from "./components/PlaceList";
 import PlaceDetail from "./components/PlaceDetail";
+import FloatingActions from "./components/FloatingActions";
 import { generateTripPlan, TripPlan } from "./lib/gemini";
 import { generateTour } from "./services/tourService";
 import { motion, AnimatePresence } from "motion/react";
@@ -168,6 +169,8 @@ function MainLayout() {
         <p className="text-zinc-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-2">NEXTSTEP AI PLANNER & EXPLORER</p>
         <p className="text-zinc-400 text-[9px] italic">Web Tạo Bởi Nhóm 3 Phục Vụ Môn Du Lịch Điện Tử</p>
       </footer>
+
+      <FloatingActions />
     </div>
   );
 }

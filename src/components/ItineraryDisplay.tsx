@@ -1,7 +1,7 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { TripPlan } from "../lib/gemini";
 import { motion, AnimatePresence } from "motion/react";
-import { Coffee, Sun, Moon, ArrowLeft, Download, Share2, Sparkles, Loader2, Wallet, MapPin, Calendar, Edit3, Trash2, Plus, Check, Save, Search } from "lucide-react";
+import { Coffee, Sun, Moon, ArrowLeft, Download, Share2, Sparkles, Loader2, Wallet, MapPin, Calendar, Edit3, Trash2, Plus, Check, Save, Search, Ticket } from "lucide-react";
 import { jsPDF } from "jspdf";
 import * as htmlToImage from 'html-to-image';
 
@@ -17,7 +17,32 @@ export default function ItineraryDisplay({ plan: initialPlan, onBack, location }
   const [activeDayIdx, setActiveDayIdx] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
   const [showCopySuccess, setShowCopySuccess] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [bookingForm, setBookingForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    guests: "2",
+    notes: ""
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
   const pdfRef = useRef<HTMLDivElement>(null);
+
+  const handleBookingSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubmitting(false);
+      setSubmitSuccess(true);
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        setIsBookingModalOpen(false);
+        setBookingForm({ name: "", email: "", phone: "", guests: "2", notes: "" });
+      }, 2000);
+    }, 1500);
+  };
 
   const handleSearchSimilarTour = () => {
     if (!location) return;
@@ -290,6 +315,17 @@ export default function ItineraryDisplay({ plan: initialPlan, onBack, location }
         </div>
       </div>
 
+      {/* Booking Action Section */}
+      <div className="flex justify-center py-4">
+        <button 
+          onClick={() => setIsBookingModalOpen(true)}
+          className="flex items-center gap-3 px-10 py-5 bg-terracotta text-white rounded-full font-bold shadow-xl hover:scale-105 active:scale-95 transition-all text-lg group"
+        >
+          <Ticket size={24} className="group-hover:rotate-12 transition-transform" />
+          Đặt tour ngay bây giờ
+        </button>
+      </div>
+
       {/* Interactive Itinerary Navigation */}
       <div className="space-y-8">
         <div className="flex flex-col items-center">
@@ -429,7 +465,7 @@ export default function ItineraryDisplay({ plan: initialPlan, onBack, location }
           </button>
           <button 
             onClick={handleShare}
-            className="text-xs font-bold text-sage flex items-center gap-1.5 hover:opacity-70 transition-opacity relative"
+            className="text-xs font-bold text-sage flex items-center gap-1.5 hover:opacity-70 transition-opacity relative border-r border-cream-border pr-6"
           >
             <Share2 size={14} /> {showCopySuccess ? "Đã sao chép liên kết!" : "Chia sẻ"}
             <AnimatePresence>
@@ -445,8 +481,133 @@ export default function ItineraryDisplay({ plan: initialPlan, onBack, location }
                 )}
             </AnimatePresence>
           </button>
+          <button 
+            onClick={() => setIsBookingModalOpen(true)}
+            className="text-xs font-bold text-terracotta flex items-center gap-1.5 hover:opacity-70 transition-opacity bg-terracotta/5 px-4 py-1.5 rounded-full"
+          >
+            <Ticket size={14} /> Đặt ngay
+          </button>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      <AnimatePresence>
+        {isBookingModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsBookingModalOpen(false)}
+              className="absolute inset-0 bg-zinc-900/40 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+            >
+              <div className="p-8 md:p-12">
+                <div className="flex justify-between items-start mb-8">
+                  <div>
+                    <h2 className="serif text-3xl text-zinc-900 mb-2">Đăng ký tư vấn</h2>
+                    <p className="text-zinc-500 text-sm italic">Khởi đầu hành trình tại {location} của bạn</p>
+                  </div>
+                  <button 
+                    onClick={() => setIsBookingModalOpen(false)}
+                    className="w-10 h-10 rounded-full bg-zinc-100 flex items-center justify-center text-zinc-400 hover:text-zinc-900 transition-colors"
+                  >
+                    <ArrowLeft size={20} className="rotate-90" />
+                  </button>
+                </div>
+
+                {submitSuccess ? (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="text-center py-12"
+                  >
+                    <div className="w-20 h-20 bg-sage/10 text-sage rounded-full flex items-center justify-center mx-auto mb-6">
+                      <Check size={40} />
+                    </div>
+                    <h3 className="serif text-2xl text-zinc-900 mb-2">Yêu cầu đã được gửi!</h3>
+                    <p className="text-zinc-500 text-sm">Chúng tôi sẽ liên hệ với bạn trong vòng 24 giờ tới.</p>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleBookingSubmit} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest ml-1">Họ và tên</p>
+                      <input 
+                        required
+                        type="text"
+                        placeholder="Nguyễn Văn A"
+                        value={bookingForm.name}
+                        onChange={(e) => setBookingForm({...bookingForm, name: e.target.value})}
+                        className="w-full px-5 py-3 bg-zinc-50 border border-zinc-100 rounded-2xl text-sm focus:ring-2 focus:ring-sage/20 outline-none"
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest ml-1">Email</p>
+                        <input 
+                          required
+                          type="email"
+                          placeholder="example@gmail.com"
+                          value={bookingForm.email}
+                          onChange={(e) => setBookingForm({...bookingForm, email: e.target.value})}
+                          className="w-full px-5 py-3 bg-zinc-50 border border-zinc-100 rounded-2xl text-sm focus:ring-2 focus:ring-sage/20 outline-none"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest ml-1">Số điện thoại</p>
+                        <input 
+                          required
+                          type="tel"
+                          placeholder="0123 456 789"
+                          value={bookingForm.phone}
+                          onChange={(e) => setBookingForm({...bookingForm, phone: e.target.value})}
+                          className="w-full px-5 py-3 bg-zinc-50 border border-zinc-100 rounded-2xl text-sm focus:ring-2 focus:ring-sage/20 outline-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest ml-1">Số lượng khách</p>
+                      <select 
+                        value={bookingForm.guests}
+                        onChange={(e) => setBookingForm({...bookingForm, guests: e.target.value})}
+                        className="w-full px-5 py-3 bg-zinc-50 border border-zinc-100 rounded-2xl text-sm focus:ring-2 focus:ring-sage/20 outline-none appearance-none"
+                      >
+                        <option value="1">1 người</option>
+                        <option value="2">2 người</option>
+                        <option value="3-5">3 - 5 người</option>
+                        <option value="6+">Trên 5 người</option>
+                      </select>
+                    </div>
+                    <div className="space-y-1.5">
+                      <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest ml-1">Ghi chú thêm</p>
+                      <textarea 
+                        placeholder="Yêu cầu đặc biệt về ăn uống, di chuyển..."
+                        value={bookingForm.notes}
+                        onChange={(e) => setBookingForm({...bookingForm, notes: e.target.value})}
+                        className="w-full px-5 py-3 bg-zinc-50 border border-zinc-100 rounded-2xl text-sm focus:ring-2 focus:ring-sage/20 outline-none h-24 resize-none"
+                      />
+                    </div>
+                    
+                    <button 
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full py-4 bg-terracotta text-white rounded-2xl font-bold shadow-lg shadow-terracotta/20 hover:scale-[0.98] active:scale-95 disabled:opacity-50 transition-all flex items-center justify-center gap-3 mt-4"
+                    >
+                      {isSubmitting ? <Loader2 size={18} className="animate-spin" /> : <Ticket size={18} />}
+                      {isSubmitting ? "Đang gửi..." : "Hoàn tất đăng ký"}
+                    </button>
+                  </form>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
